@@ -1,41 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <style>
+      li {
+        font-size: 20px;
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+      }
+      ol {
+        margin-top: 20px;
+        list-style: none;
+      }
+      .logOut_btn{
+        float: right;
+      }
+    </style>
+  </head>
 
-<body>
-    <h1>Home</h1>
-    <button class="btn">logout</button>
+  <body class="bg-dark text-light">
+    <button class="logOut_btn btn btn-primary  p-2 me-5">logout</button>
 
-    <script type="module">
-        import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js';
-        import { auth } from './config.js';
+    <div class="container text-center my-5">
+      <h1 class="my-5">To-Do-App</h1>
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const uid = user;
-                console.log(uid);
-            } else {
-                window.location = 'login.html'
-            }
+      <input class="form-control" id="inp" type="text" />
+      <button class="btn btn-success m-5 p-3" id="add_btn">Add</button>
+      <button class="btn btn-danger m-5 p-3" id="del_all_btn">
+        Delelte All
+      </button>
+      <ol id="list_ol"></ol>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      var getol = document.getElementById("list_ol");
+
+      document.getElementById("add_btn").addEventListener("click", function () {
+        // li text
+
+        var a = document.getElementById("inp");
+        var li = document.createElement("li");
+        var liText = document.createTextNode(a.value);
+        getol.appendChild(li);
+        li.appendChild(liText);
+        a.value = " ";
+
+        // edit button
+
+        var edit_btn = document.createElement("button");
+        var edit_btn_text = document.createTextNode("Edit");
+        edit_btn.appendChild(edit_btn_text);
+        li.appendChild(edit_btn);
+        edit_btn.setAttribute("onclick", "editBtn(this)");
+        edit_btn.setAttribute("class", "btn btn-warning");
+
+        // delete button
+
+        var del_btn = document.createElement("button");
+        var del_btn_text = document.createTextNode("Delete");
+        del_btn.appendChild(del_btn_text);
+        li.appendChild(del_btn);
+        del_btn.setAttribute("onclick", "del(this)");
+        del_btn.setAttribute("class", "btn btn-danger");
+      });
+
+      // del all btn functionality
+
+      document
+        .getElementById("del_all_btn")
+        .addEventListener("click", function () {
+          getol.innerHTML = "";
         });
 
-        const btn = document.querySelector('.btn')
-        btn.addEventListener('click', () => {
-            signOut(auth).then(() => {
-                console.log('user logout successfully');
-                window.location = 'login.html'
-            }).catch((error) => {
-                console.log('error ===>' , error);
-            });
-        })
+      // del btn functionality
 
+      function del(o) {
+        o.parentNode.remove();
+      }
 
+      // edit btn functionality
+
+      function editBtn(k) {
+        var editText = prompt(
+          "enter edit text",
+          k.parentNode.firstChild.nodeValue
+        );
+        k.parentNode.firstChild.nodeValue = editText;
+      }
     </script>
-</body>
 
+    <script type="module">
+      import {
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+      import { auth } from "./config.js";
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const uid = user;
+          console.log(uid);
+        } else {
+          window.location = "login.html";
+        }
+      });
+
+      const btn = document.querySelector(".logOut_btn");
+      btn.addEventListener("click", () => {
+        signOut(auth)
+          .then(() => {
+            console.log("user logout successfully");
+            window.location = "login.html";
+          })
+          .catch((error) => {
+            console.log("error ===>", error);
+          });
+      });
+    </script>
+  </body>
 </html>
